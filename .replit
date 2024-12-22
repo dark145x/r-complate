@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web"]
+modules = ["nodejs-20", "web", "nix"]
 run = "npm run start"
 
 [nix]
@@ -10,3 +10,11 @@ run = ["sh", "-c", "npm run start"]
 [[ports]]
 localPort = 34847
 externalPort = 80
+
+[[ports]]
+localPort = 43009
+externalPort = 3000
+
+[[ports]]
+localPort = 46735
+externalPort = 3001

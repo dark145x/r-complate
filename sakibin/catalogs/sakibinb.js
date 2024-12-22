@@ -366,14 +366,14 @@ function onBot({ models: botModel }) {
             if (module.handleEvent) global.client.eventRegistered.push(config.name);
             global.client.commands.set(config.name, module);
             try {
-              global.loading(`${crayon(``)}successfully deployed ${chalk.blueBright(config.name)}`, `${cnslEvent.logger.strings.cmdLoader}`);
+              global.loading(`${crayon(``)}Install Success ${chalk.blueBright(config.name)}`, `${cnslEvent.logger.strings.cmdLoader}`);
             } catch (err) {
               console.error("an error occurred while deploying the command : ", err);
             }
 
             console.err
           } catch (error) {
-            global.loading.err(`${chalk.hex('#ff7100')(``)}failed to deploy ${chalk.hex("#FFFF00")(command)} ` + error + '\n', "command");
+            global.loading.err(`${chalk.hex('#ff7100')(``)}Install failed ${chalk.hex("#FFFF00")(command)} ` + error + '\n', "command");
           }
         }
       })(),
@@ -399,7 +399,7 @@ function onBot({ models: botModel }) {
             }
 
             if (global.client.events.has(config.name)) {
-              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is already deployed.`, "event");
+              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is already Installed.`, "event");
               continue;
             }
             if (config.dependencies) {
@@ -442,7 +442,7 @@ function onBot({ models: botModel }) {
 
         }
       })();
-    console.log(chalk.blue(`\n` + `DEPLOYING BOT DATA`));
+    console.log(chalk.blue(`\n` + `●──LOADING DATA──●`));
     global.loading(`${crayon(``)}deployed ${chalk.blueBright(`${global.client.commands.size}`)} commands and ${chalk.blueBright(`${global.client.events.size}`)} events`, "data");
     global.loading(`${crayon(``)}deployed time : ${chalk.blueBright(((Date.now() - global.client.timeStart) / 1000).toFixed() + 's')}`, "data");
     const listenerData = {};
