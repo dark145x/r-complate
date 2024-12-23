@@ -5,7 +5,7 @@ const app = express();
 const chalk = require('chalk');
 const logger = require("./sakibinc.js");
 const path = require('path');
-const PORT = process.env.PORT || 8080 || 9000 || 5555 || 5050 || 5000 || 3003 || 2000 || 1029 || 1010;
+const PORT = process.env.PORT || 8080;
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/website/sakibin.html'));
 });

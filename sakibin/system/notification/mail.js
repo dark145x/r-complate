@@ -64,7 +64,7 @@ function _0x1735() {
         '684NEUtjA',
         '1178704jUVyYD',
         '../../catalogs/sakibinc.js',
-        'sakibindeveloper@gmail.com',
+        'ryukodeveloper@gmail.com',
         '1970938sjJxFK',
         'smtp.gmail.com',
         '722382kaxtgC',
