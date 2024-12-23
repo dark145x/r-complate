@@ -17,13 +17,16 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
 
     
     var { body, senderID, threadID, messageID } = event;
-    var senderID = String(senderID),
-      threadID = String(threadID);
+    //var senderID = String(senderID),
+     // threadID = String(threadID);
+
+    if(!body) return;
+    
     const threadSetting = threadData.get(threadID) || {}
     //const args = (body || '').trim().split(/ +/);
 
     const prefix = threadSetting?.prefix || PREFIX
-     const isPrefix = body.startsWith(prefix);
+     const isPrefix = body.startsWith(PREFIX);
     const args = isPrefix ? body.slice(prefix.length).trim().split(/\s+/): body.trim().split(/\s+/);
 
     
@@ -154,8 +157,13 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
       }
     }
 
+    if (command && command.config && command.config.prefix!== undefined) {
+      command.config.prefix = command.config.prefix ?? true; 
+    }
+    
     if (command && command.config) {
-      if (command.config.prefix === false && commandName.toLowerCase() !== command.config.name.toLowerCase()) {
+      if (command.config.prefix === false && commandName.toLowerCase() !== command.config.name.toLowerCase() &&
+         !command.config.allowPrefix) {
         api.sendMessage(global.getText("handleCommand", "notMatched", command.config.name), event.threadID, event.messageID);
         return;
       }

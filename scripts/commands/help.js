@@ -2,28 +2,30 @@ module.exports.config = {
   name: "help",
   version: "1.0.2",
   permission: 0,
-  credits: "sakibin",
-  description: "beginner's guide",
+  credits: "Mirai Team & Mod by Yan Maglinte",
+  description: "Beginner's Guide",
   prefix: true,
   premium: false,
-  category: "guide",
+  category: "system",
   usages: "[Shows Commands]",
   cooldowns: 5,
   envConfig: {
-		autoUnsend: true,
-		delayUnsend: 60
-	}
+    autoUnsend: true,
+    delayUnsend: 60
+  }
 };
 
 module.exports.languages = {
   en: {
     moduleInfo:
-      "%1\n%2\n\nusage : %3\ncategory : %4\nwaiting time : %5 seconds(s)\npermission : %6\n\nmodule code by %7.",
+      "「 %1 」\n%2\n\n❯ Usage: %3\n❯ Category: %4\n❯ Waiting time: %5 seconds(s)\n❯ Permission: %6\n\n» Module code by Sakibin ",
     helpList:
-      `there are %1 commands and %2 categories of ${global.config.BOTNAME} ai.`,
-    user: "user",
-    adminGroup: "group admin",
-    adminBot: "bot admin",
+      `◖Total %1 cmd or %2 categories.`,
+    guideList:
+      `◖Use: "%1${this.config.name} ‹command›" to know how to use that command!\n◖Type: "%1${this.config.name} ‹page_number›" to show that page contents!`,
+    user: "User",
+    adminGroup: "Admin group",
+    adminBot: "Admin bot",
   },
 };
 
@@ -75,11 +77,13 @@ module.exports.run = async function ({ api, event, args, getText }) {
 
   if (!command) {
     const commandList = Array.from(commands.values());
-    const categories = new Set(commandList.map((cmd) => cmd.config.category.toLowerCase()));
+    const categories = new Set(
+      commandList.map((cmd) => 
+        (cmd.config?.category || cmd.config?.category || "unknown").toLowerCase()));
     const categoryCount = categories.size;
 
     const categoryNames = Array.from(categories);
-    const itemsPerPage = 10;
+    const itemsPerPage = 4;
     const totalPages = Math.ceil(categoryNames.length / itemsPerPage);
 
     let currentPage = 1;
@@ -93,7 +97,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
         currentPage = parsedPage;
       } else {
         return api.sendMessage(
-          `oops, you went too far. please choose a page between 1 and ${totalPages}.`,
+          `◖Oops! You went too far! Please choose a page between 1 and ${totalPages}◗`,
           threadID,
           messageID
         );
@@ -107,78 +111,66 @@ module.exports.run = async function ({ api, event, args, getText }) {
     for (let i = 0; i < visibleCategories.length; i++) {
       const category = visibleCategories[i];
       const categoryCommands = commandList.filter(
-        (cmd) =>
-          cmd.config.category.toLowerCase() === category
+        (cmd) => 
+          (cmd.config.category ? cmd.config.category.toLowerCase() : 'unknown') === category
       );
       const commandNames = categoryCommands.map((cmd) => cmd.config.name);
       const numberFont = [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
+        "1⃞",
+        " 2⃞",
+        " 3⃞",
+        " 4⃞",
+        " 5⃞",
+        " 6⃞",
+        " 7⃞",
+        " 8⃞",
+        " 9⃞",
+        " 1⃞0",
       ];
-      msg += `${
-        category.charAt(0).toLowerCase() + category.slice(1)
-      } category :\n\n${commandNames.join("\n")}\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n`;
+      msg += `${numberFont[i]}•────• ${
+        category.charAt(0).toUpperCase() + category.slice(1)
+      } •────•\n⭓${commandNames.join(" ⭓")}\n\n`;
     }
+
     const numberFontPage = [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
+      "❶",
+      "❷",
+      "❸",
+      "❹",
+      "❺",
+      "❻",
+      "❼",
+      "❽",
+      "❾",
+      "❿",
+      "⓫",
+      "⓬",
+      "⓭",
+      "⓮",
+      "⓯",
+      "⓰",
+      "⓱",
+      "⓲",
+      "⓳",
+      "⓴",
     ];
-    msg += `page ${numberFontPage[currentPage - 1]} of ${
+    msg += `╭ ──────── ╮
+│ Page ${numberFontPage[currentPage - 1]} of ${
       numberFontPage[totalPages - 1]
-    }\n\n`;
+    } │\n╰ ──────── ╯\n`;
     msg += getText("helpList", commands.size, categoryCount, prefix);
 
-    const axios = require("axios");
-    const fs = require("fs-extra");
-    const imgP = [];
-    const img = [
-      "https://i.ibb.co/ZLnvPwQ/Picsart-23-07-24-11-03-50-602.png"
-    ];
-    const path = __dirname + "/cache/menu.png";
-    const rdimg = img[Math.floor(Math.random() * img.length)];
+    const config = require("./../../sakibin.json")
+    const msgg =  `‣ Bot Owner: ${config.BOTOWNER}\n ${msg}`;
 
-    const { data } = await axios.get(rdimg, {
-      responseType: "arraybuffer",
-    });
 
-    fs.writeFileSync(path, Buffer.from(data, "utf-8"));
-    imgP.push(fs.createReadStream(path));
-    const msgg = {
-  body: `existing commands and categories\n\nhere's the categories and commands of ${global.config.BOTNAME} ai ;\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n` + msg + `\n\n`
-    };
+    const sentMessage = await api.shareContact(msgg, "100065445284007", threadID);
 
-    const sentMessage = await api.sendMessage(msgg, threadID, async (error, info) => {
-			if (autoUnsend) {
-				await new Promise(resolve => setTimeout(resolve, delayUnsend * 500));
-				return api.unsendMessage(info.messageID);
-			} else return;
-		}, messageID);
+
+      setTimeout(() => {
+  api.unsendMessage(sentMessage.messageID);
+      }, 60000);
+
   } else {
     return api.sendMessage(
       getText(
@@ -197,11 +189,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
           : getText("adminBot"),
         command.config.credits
       ),
-      threadID, async (error, info) => {
-			if (autoUnsend) {
-				await new Promise(resolve => setTimeout(resolve, delayUnsend * 500));
-				return api.unsendMessage(info.messageID);
-			} else return;
-		}, messageID);
+      threadID, messageID
+    );
   }
 };

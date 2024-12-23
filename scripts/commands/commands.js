@@ -1,7 +1,8 @@
 module.exports.config = {
     name: "command",
+    aliases: ["cmd", "module"],
     version: "1.0.0",
-    permission: 2,
+    permission: 3,
     credits: "sakibin",
     description: "manage/control all bot modules",
     prefix: true,

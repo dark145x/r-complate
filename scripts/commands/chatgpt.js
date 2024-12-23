@@ -1,39 +1,53 @@
+const { Hercai } = require('hercai');
+const herc = new Hercai();
+
 module.exports.config = {
-  name: "gpt",
-  aliaces: ["ai", "bot"],
-  version: "1.1.0",
+  name: 'ai',
+  version: '1.1.0',
+  aliases: ["gpt"],
   permission: 0,
-  credits: "sakibin",
-  description: "",
-  prefix: false,
-  premium: true,
-  category: "without prefix",
-  usage: `${global.config.BOTNAME} (question)`,
-  cooldowns: 3,
-  dependency: {
-    "axios": ""
-  }
+  credits: 'Yan Maglinte | Liane Cagara',
+  description: 'An AI command using Hercai API!',
+  premium: false,
+  prefix: true,
+  allowpremium: false,
+  category: 'Ai',
+  usages: 'Ai [prompt]',
+  cooldowns: 5,
 };
 
-module.exports.run = async function ({api, event, args}) {
-  try{
-  const axios = require('axios');
-  const {sensui} = global.apisakibin
-  let ask = args.join(' ');
-  if (!ask) {
-    return api.sendMessage('please provide a question.', event.threadID, event.messageID)
-  }
-      var IDs = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-      var randomIDs = Math.floor(Math.random() * IDs.length);
+module.exports.run = async function ({ api, event, args }) {
+  const prompt = args.join(' ');
 
-  const res = await axios.get(`https://ccprojectapis.ddns.net/api/gptconvo?ask=${ask}&id=${randomIDs}`);
-  const reply = res.data.response;
-  if (res.error) {
-    return api.sendMessage('having some unexpected error while fetching api.', event.threadID, event.messageID)
-  } else {
-    return api.sendMessage(`${reply}`, event.threadID, event.messageID)
-  }
+  try {
+    if (!prompt) {
+      return api.sendMessage("Please specify a message!", event.threadID);
+    }
+
+    // Notify the user that the response is being fetched
+    const loadingMessageID = await new Promise((resolve, reject) => {
+      api.sendMessage("Fetching answer...", event.threadID, (err, messageInfo) => {
+        if (err) reject(err);
+        else resolve(messageInfo.messageID);
+      });
+    });
+
+    // React with a clock emoji
+    api.setMessageReaction("⏱️", event.messageID, (err) => {}, true);
+
+    // Fetch the AI response
+    const response = await herc.question({ model: 'v3', content: prompt });
+
+    // Edit the loading message with the response
+    api.editMessage(response.reply, loadingMessageID, (err) => {
+      if (err) console.error("Error editing loading message:", err);
+    });
+
+    // React with a check mark
+    api.setMessageReaction("✅", event.messageID, (err) => {}, true);
   } catch (error) {
-    return api.sendMessage('having some unexpected error', event.threadID, event.messageID)
+    // Send an error message
+    api.sendMessage(`⚠️ Something went wrong: ${error}`, event.threadID);
+    api.setMessageReaction("⚠️", event.messageID, (err) => {}, true);
   }
-}
+};
